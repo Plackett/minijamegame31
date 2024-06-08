@@ -12,6 +12,7 @@ public class Interactible : MonoBehaviour
     [SerializeField] private GameObject computerCamera;
     [SerializeField] private GameObject computerScreen;
     [SerializeField] private UnityEngine.Video.VideoPlayer vp;
+    [SerializeField] private GameObject objective1;
 
 
     private void OnMouseOver()
@@ -41,6 +42,7 @@ public class Interactible : MonoBehaviour
     public void OnComputerStart(PlayableDirector d)
     {
         computerScreen.SetActive(true);
+        objective1.SetActive(false);
         vp.Play();
     }
 

@@ -1,32 +1,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class rotateDoor : MonoBehaviour
 {
-    Quaternion startRotation;
-    Quaternion endRotation;
-    float rotationProgress = -1;
+    bool rotating = false;
+    [SerializeField] private GameObject blackOutSquare;
+    [SerializeField] private GameObject objective1;
+
+    IEnumerator CameraWait()
+    {
+        yield return new WaitForSeconds(2);
+        rotating = true;
+    }
+
+    IEnumerator FadeToBlack()
+    {
+        Color objColor = blackOutSquare.GetComponent<Image>().color;
+        float fade;
+        yield return new WaitForSeconds(3);
+        while(blackOutSquare.GetComponent<Image>().color.a < 1)
+        {
+            fade = objColor.a + (Time.deltaTime);
+
+            objColor = new Color(objColor.r, objColor.g, objColor.b, fade);
+            blackOutSquare.GetComponent<Image>().color = objColor;
+            yield return null;
+        }
+        yield return new WaitForSeconds(1);
+        while (blackOutSquare.GetComponent<Image>().color.a > 0)
+        {
+            fade = objColor.a - (Time.deltaTime);
+
+            objColor = new Color(objColor.r, objColor.g, objColor.b, fade);
+            blackOutSquare.GetComponent<Image>().color = objColor;
+            yield return null;
+        }
+        objective1.SetActive(true);
+    }
 
     void Update()
     {
-        if (rotationProgress < 1 && rotationProgress >= 0)
+        if(rotating && transform.rotation.y > -120)
         {
-            rotationProgress += Time.deltaTime * 1;
-
-            // Here we assign the interpolated rotation to transform.rotation
-            // It will range from startRotation (rotationProgress == 0) to endRotation (rotationProgress >= 1)
-            transform.rotation = Quaternion.Lerp(startRotation, endRotation, rotationProgress);
+            transform.Rotate(0f,-180*Time.deltaTime,0f);
+        }
+        else
+        {
+            rotating = false;
         }
     }
 
     public void Rotate()
     {
-        // Here we cache the starting and target rotations
-        startRotation = transform.rotation;
-        endRotation = Quaternion.Euler(0, 120, 180);
-
-        // This starts the rotation, but you can use a boolean flag if it's clearer for you
-        rotationProgress = 0;
+        StartCoroutine(CameraWait());
+        StartCoroutine(FadeToBlack());
     }
 }
