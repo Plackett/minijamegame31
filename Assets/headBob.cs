@@ -11,17 +11,16 @@ public class headBob : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    { 
+        transform.position = new Vector3(0, 1, 0) + transform.parent.position;
         if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f || Mathf.Abs(Input.GetAxis("Vertical")) > 0.1f)
         {
-            transform.position = new Vector3(0, 1, 0) + transform.parent.position;
             //Player is moving
             timer += Time.deltaTime * walkingBobbingSpeed;
             transform.position += Vector3.up * (Mathf.Sin(timer) * bobbingAmount);
         }
         else
         {
-            transform.position = new Vector3(0, 1, 0) + transform.parent.position;
             timer = Mathf.PI / 2;
         }
         if (timer > Mathf.PI * 2)

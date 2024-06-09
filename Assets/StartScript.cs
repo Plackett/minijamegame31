@@ -18,6 +18,7 @@ public class StartScript : MonoBehaviour
     {
         if(gameStarted == false && Input.GetKey(KeyCode.Return))
         {
+            Cursor.visible = false;
             cameras.SetActive(true);
             menuDirector.playableAsset = menuCutscene;
             menuDirector.Play();

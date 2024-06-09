@@ -38,6 +38,7 @@ public class rotateDoor : MonoBehaviour
             yield return null;
         }
         objective1.SetActive(true);
+        Cursor.visible = true;
     }
 
     void Update()
@@ -50,6 +51,11 @@ public class rotateDoor : MonoBehaviour
         {
             rotating = false;
         }
+    }
+
+    void Start()
+    {
+        Cursor.visible = false;
     }
 
     public void Rotate()
