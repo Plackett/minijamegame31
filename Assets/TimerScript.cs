@@ -32,6 +32,12 @@ public class TimerScript : MonoBehaviour
             elapsed += Time.deltaTime;
             timeBar.sizeDelta = new Vector2(100 * (elapsed / TIME), 15);
 
+            // normal colors
+            if (elapsed <= TIME / 2)
+            {
+                back.color = new Color(23f, 255f, 0f, 100f);
+            }
+
             // warning colors
             if (elapsed > TIME / 2)
             {

@@ -10,6 +10,11 @@ public class ConstraintedMovement : MonoBehaviour
     private float yaw = 0.0f;
     private float pitch = 0.0f;
 
+    public void setMovementActive(bool enabled)
+    {
+        movementActive = enabled;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -20,12 +25,12 @@ public class ConstraintedMovement : MonoBehaviour
             if(Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f)
             {
                 playing = true;
-                transform.Translate(Vector3.right * 2 * Time.deltaTime * Input.GetAxis("Horizontal"));
+                transform.Translate(Vector3.right * 4 * Time.deltaTime * Input.GetAxis("Horizontal"));
             }
             if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.1f)
             {
                 playing = true;
-                transform.Translate(Vector3.forward * 2 * Time.deltaTime * Input.GetAxis("Vertical"));
+                transform.Translate(Vector3.forward * 4 * Time.deltaTime * Input.GetAxis("Vertical"));
             }
             if(Mathf.Abs(Input.GetAxis("Horizontal")) < 0.1f && Mathf.Abs(Input.GetAxis("Vertical")) < 0.1f)
             {
@@ -48,6 +53,7 @@ public class ConstraintedMovement : MonoBehaviour
             if (pitch < -90.0f) { pitch = -90.0f; }
             transform.eulerAngles = new Vector3(0.0f, yaw, 0.0f);
             transform.GetChild(0).eulerAngles = new Vector3(pitch,yaw,0.0f);
+            transform.GetChild(0).position = new Vector3(0, 1, 0) + transform.position;
         }
         else { this.GetComponent<AudioSource>().Stop(); }
     }

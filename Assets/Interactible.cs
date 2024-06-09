@@ -5,18 +5,47 @@ using UnityEngine.Playables;
 
 public class Interactible : MonoBehaviour
 {
-    private bool isInteractable = false;
+    public bool isInteractable = false;
     public bool isOnComputer = false;
     [SerializeField] private PlayableDirector director;
     [SerializeField] private PlayableAsset cutscene;
     [SerializeField] private GameObject computerCamera;
     [SerializeField] private GameObject computerScreen;
     [SerializeField] private GameObject objective1;
+    [SerializeField] private GameObject objective4;
     [SerializeField] private Texture2D cursorTexture;
     [SerializeField] private ConstraintedMovement cm;
     [SerializeField] private PCSCript pc;
     public TimerScript ts;
 
+    IEnumerator openPCDelay()
+    {
+        yield return new WaitForSeconds(1);
+        computerScreen.SetActive(true);
+        objective1.SetActive(false);
+#if UNITY_WEBGL
+                Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
+#else
+        Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+#endif
+        Cursor.lockState = CursorLockMode.Confined;
+        pc.StartUpPC();
+        ts.StartTime(60);
+    }
+
+    IEnumerator returnPCDelay()
+    {
+        yield return new WaitForSeconds(1);
+        computerScreen.SetActive(true);
+#if UNITY_WEBGL
+                Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
+#else
+        Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+#endif
+        Cursor.lockState = CursorLockMode.Confined;
+        pc.page = 3;
+        pc.nextPage();
+    }
 
     private void OnMouseOver()
     {
@@ -32,25 +61,37 @@ public class Interactible : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (isInteractable)
+        if (isInteractable && pc.started == false)
         {
             computerCamera.SetActive(true);
             isOnComputer = true;
             director.playableAsset = cutscene;
             director.Play();
             director.stopped += OnComputerStart;
-        }
+        } else if(isInteractable && pc.shipped == true)
+        {
+            pc.shipped = false;
+            computerCamera.SetActive(true);
+            isOnComputer = true;
+            director.playableAsset = cutscene;
+            director.Play();
+            director.stopped -= OnComputerStart;
+            director.stopped += OnComputerReturn;
+            objective4.SetActive(false);
+            objective1.SetActive(false);
+            cm.setMovementActive(false);
+        }    
     }
 
     public void OnComputerStart(PlayableDirector d)
     {
-        cm.movementActive = false;
-        computerScreen.SetActive(true);
-        objective1.SetActive(false);
-        Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
-        Cursor.lockState = CursorLockMode.Confined;
-        pc.StartUpPC();
-        ts.StartTime(60);
+        cm.setMovementActive(false);
+        StartCoroutine(openPCDelay());
+    }
+
+    public void OnComputerReturn(PlayableDirector d)
+    {
+        StartCoroutine(returnPCDelay());
     }
 
     // Update is called once per frame

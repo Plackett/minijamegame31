@@ -12,6 +12,7 @@ public class StartScript : MonoBehaviour
     [SerializeField] private PlayableDirector menuDirector;
     public ConstraintedMovement plr;
     bool gameStarted = false;
+    public audioController aC;
 
     // Update is called once per frame
     void Update()
@@ -26,7 +27,14 @@ public class StartScript : MonoBehaviour
             cameras.SetActive(false);
             gameCamera.SetActive(true);
             gameStarted = true;
-            plr.movementActive = true;
+            plr.setMovementActive(true);
+            aC.StopBackTrackCity();
+            aC.StartBackTrackOffice();
         }
+    }
+
+    void Start()
+    {
+        aC.StartBackTrackCity();
     }
 }
